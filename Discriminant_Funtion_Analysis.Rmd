@@ -9,3 +9,40 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+# What is a discriminant function anaysis used for?
+
+## A discriminant function anaysis can be used to predict group membership based on discriminating continous variable and how well those groups can be differentiated by those variables.
+
+## In essence, a discriminant function anaysis is the reverse of a multivariate analysis of variance or MANOVA where in a MANOVA the groups are the independent variables and the predictors are the dependent variables. For a discriminant function anaysis, the groups are the dependent variables while the predictors are the independent variables. 
+
+# Assumptions and limitations
+
+## 1) Unequal sample sizes are not a problem; however, the sample size within groups must be greater than the number of independent variable predictors (Rule of thumb: ~ 4 to 5 as many observations as predictor variables).
+
+## 2) Outliers can cause problems when assesing significance and should transformed or removed. Normally distributed variables are prefered, but variables not normally distributed will not influence the significance tests as long as the non-normality is not due to outliers.
+
+## 3) It is important that the independent variables must not be correlated with one another and have low multicollinearity. 
+
+## 4) It is important to evaluate the degree to which the variance and co-variance matricies are herterogeneic within groups. 
+
+# How does a discriminant function anaysis work?
+
+## The analysis creates linear combinations of predictors, so called discriminant functions. The number of functions is equal to the number of groups or the number of predictors, whichever is smaller. Each discriminant function maximizes the amount of discrimination between groups while also remaining non-correlated with other functions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
