@@ -1,1 +1,0 @@
-# Discriminant_Function_Analysis
