@@ -9,11 +9,11 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# What is a discriminant function anaysis used for?
+# What is a discriminant function anaysis (DFA) used for?
 
-### A discriminant function anaysis can be used to predict group membership based on discriminating continous variable and how well those groups can be differentiated by those variables.
+### A DFA can be used to predict group membership based on discriminating continous variable and how well those groups can be differentiated by those variables.
 
-### In essence, a discriminant function anaysis is the reverse of a multivariate analysis of variance or MANOVA where in a MANOVA the groups are the independent variables and the predictors are the dependent variables. For a discriminant function anaysis, the groups are the dependent variables while the predictors are the independent variables. 
+### In essence, a DFA is the reverse of a multivariate analysis of variance or MANOVA. In a MANOVA, the groups are the independent variables and the predictors are the dependent variables. For a DFA, the groups are the dependent variables while the predictors are the independent variables. 
 
 # Assumptions and limitations
 
