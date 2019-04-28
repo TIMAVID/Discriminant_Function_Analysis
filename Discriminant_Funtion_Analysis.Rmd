@@ -31,6 +31,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ### The analysis creates linear combinations of predictors, so called discriminant functions. The number of functions is equal to the number of groups or the number of predictors, whichever is smaller. Each discriminant function maximizes the amount of discrimination between groups while also remaining non-correlated with the other functions.
 
+# Linear discriminant analysis
+
 ```{r}
 library(MASS) # required for the lda() function
 library(caret) 
@@ -88,6 +90,13 @@ ggplot(lda.data, aes(LD1, LD2)) +
 ```
 
 
+```{r}
+# Model accuracy
+
+mean(Predict_results$class==test.transformed$Species)
+```
+
+# Quadratic discriminant analysis
 
 
 
