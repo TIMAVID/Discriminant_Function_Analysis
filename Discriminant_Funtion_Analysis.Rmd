@@ -11,25 +11,25 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # What is a discriminant function anaysis (DFA) used for?
 
-### A DFA can be used to predict group membership based on discriminating continous variable. It can also give a sense of how well those groups can be differentiated by those variables.
+> A DFA can be used to predict group membership based on discriminating continous variable. It can also give a sense of how well those groups can be differentiated by those variables.
 
-### In essence, a DFA is the reverse of a multivariate analysis of variance or MANOVA. In a MANOVA, the groups are the independent variables and the predictors are the dependent variables. For a DFA, the groups are the dependent variables while the predictors are the independent variables. 
+> In essence, a DFA is the reverse of a multivariate analysis of variance or MANOVA. In a MANOVA, the groups are the independent variables and the predictors are the dependent variables. For a DFA, the groups are the dependent variables while the predictors are the independent variables. 
 
 # Assumptions and limitations
 
-### 1) Unequal sample sizes are not a problem; however, the sample size within groups must be greater than the number of independent variable predictors (Rule of thumb: ~ 4 to 5 as many observations as predictor variables).
+* 1) Unequal sample sizes are not a problem; however, the sample size within groups must be greater than the number of independent variable predictors (Rule of thumb: ~ 4 to 5 as many observations as predictor variables).
 
-### 2) Outliers can cause problems when assesing significance and should transformed or removed. Normally distributed variables are prefered, but variables not normally distributed will not influence the significance tests as long as the non-normality is not due to outliers.
+* 2) Outliers can cause problems when assesing significance and should transformed or removed. Normally distributed variables are prefered, but variables not normally distributed will not influence the significance tests as long as the non-normality is not due to outliers.
 
-### 3) It is important that the independent variables must not be correlated with one another and have low multicollinearity. 
+* 3) It is important that the independent variables must not be correlated with one another and have low multicollinearity. 
 
-### 4) It is important to evaluate that there is not significant heterogeneity in the variance and co-variance matricies within groups. 
+* 4) It is important to evaluate that there is not significant heterogeneity in the variance and co-variance matricies between groups. 
 
-### Discriminant function anaysis is similar to logistic regression and in fact both can be used to answer the same research questions. In many cases logistic regression may be preferable to a discriminant function anaysis because it has less assumptions and restrictions. However, a discriminant function anaysis may be prefered when looking at many different classifications. 
+> Discriminant function anaysis is similar to logistic regression and in fact both can be used to answer the same research questions. In many cases logistic regression may be preferable to a discriminant function anaysis because it has less assumptions and restrictions. However, a discriminant function anaysis may be prefered when looking at many different classifications. 
 
 # How does a discriminant function anaysis work?
 
-### The analysis creates linear combinations of predictors, so called discriminant functions. The number of functions is equal to one less than the number of groups or equal to the number of predictors, whichever is smaller. Each discriminant function maximizes the amount of discrimination between groups while also remaining non-correlated with the other discriminant functions.
+> The analysis creates linear combinations of predictors, so called discriminant functions. The number of functions is equal to one less than the number of groups or equal to the number of predictors, whichever is smaller. Each discriminant function maximizes the amount of discrimination between groups while also remaining non-correlated with the other discriminant functions.
 
 # Linear discriminant analysis
 
@@ -76,11 +76,18 @@ test.transformed <- preproc.param %>% predict(test.data)
 ```{r}
 LDA_object <- lda(Species~., data = train.transformed) # creates an object that is the results of the learning phase of the LDA - this is what you will use to predict what category each subsequent set of variables you feed it most likely belong to
 LDA_object
-plot(LDA_object, col = as.integer(train.transformed$Species))
+# Prior probabilities of groups = probability of selecting one observation and it belonging to that respective group
+# Group means = means for each variable belonging to a group
+# Coefficients of linear discriminants = Coefficients of each discriminant creating the discriminant function
+# Proportions of trace = proportion of variance between groups as explained by each discriminant function 
+
+plot(LDA_object, col = as.integer(train.transformed$Species)) # vizualize separation of groups by discriminant functions 
+
+plot(LDA_object, dimen = 1, type = "b") # visualize only separation by LD1 
 ```
 
 ```{r}
-Predict_results <- predict(LDA_object, newdata = test.transformed) # use the LDA results object to predict the category for your experimental data - NOTE: if you have multiple rows in your experimental data, you'll need to use a for loop to compare each row to your LDA object - try this on your own first and if you can't make it work, I'll show you what I did
+Predict_results <- predict(LDA_object, newdata = test.transformed) # use the LDA results object to predict the category for your experimental data - NOTE: if you have multiple rows in your experimental data, you'll need to use a for loop to compare each row to your LDA object 
 ```
 
 ```{r}
@@ -97,10 +104,35 @@ mean(Predict_results$class==test.transformed$Species)
 
 # Quadratic discriminant analysis
 
+> Quadratic discriminant analysis is an alternative to linear discriminant analysis. This type of discriminant analysis does not assume equal variance and co-variance matricies between groups. This makes this type of analysis better for very large datasets.  
 
+```{r}
+QDAmodel <- qda(Species~., data = train.transformed)
+QDAmodel
+# Make predictions
+predictions <- predict(QDAmodel, newdata = test.transformed)
+# Model accuracy
+mean(predictions$class == test.transformed$Species)
+```
 
+```{r}
+# How well does the model fit the training data?
+qda.train <- predict(QDAmodel)
+train.transformed$qda <- qda.train$class
+table(train.transformed$qda, train.transformed$Species)
+```
 
+```{r}
+# How well does the model predict group assignment?
+qda.test <- predict(QDAmodel,test.transformed)
+test.transformed$qda <- qda.test$class
+table(test.transformed$qda, test.transformed$Species)
+```
 
-
+```{r}
+#  plot the quadratic discriminant functions for each variable combination
+library(klaR)
+partimat(Species ~ Sepal.Length + Sepal.Width + Petal.Length + Petal.Width, data=train.transformed, method="qda")
+```
 
 
