@@ -69,7 +69,7 @@ test.transformed <- preproc.param %>% predict(test.data)
 # 
 # 
 # 
-# Predict_results <- predict(LDA_object, newdata = experimental_dat) # use the LDA results object to predict the category for your experimental data - NOTE: if you have multiple rows in your experimental data, you'll need to use a for loop to compare each row to your LDA object - try this on your own first and if you can't make it work, I'll show you what I did
+# Predict_results <- predict(LDA_object, newdata = experimental_dat) # use the LDA results object to predict the category for your experimental data - NOTE: if you have multiple rows in your experimental data, you'll need to use a for loop to compare each row to your LDA object
 ```
 
 
