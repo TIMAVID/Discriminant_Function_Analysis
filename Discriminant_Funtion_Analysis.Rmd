@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # What is a discriminant function anaysis (DFA) used for?
 
-### A DFA can be used to predict group membership based on discriminating continous variable and how well those groups can be differentiated by those variables.
+### A DFA can be used to predict group membership based on discriminating continous variable. It can also give a sense of how well those groups can be differentiated by those variables.
 
 ### In essence, a DFA is the reverse of a multivariate analysis of variance or MANOVA. In a MANOVA, the groups are the independent variables and the predictors are the dependent variables. For a DFA, the groups are the dependent variables while the predictors are the independent variables. 
 
@@ -23,26 +23,26 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ### 3) It is important that the independent variables must not be correlated with one another and have low multicollinearity. 
 
-### 4) It is important to evaluate the degree to which the variance and co-variance matricies are herterogeneic within groups. 
+### 4) It is important to evaluate that there is not significant heterogeneity in the variance and co-variance matricies within groups. 
 
 ### Discriminant function anaysis is similar to logistic regression and in fact both can be used to answer the same research questions. In many cases logistic regression may be preferable to a discriminant function anaysis because it has less assumptions and restrictions. However, a discriminant function anaysis may be prefered when looking at many different classifications. 
 
 # How does a discriminant function anaysis work?
 
-### The analysis creates linear combinations of predictors, so called discriminant functions. The number of functions is equal to the number of groups or the number of predictors, whichever is smaller. Each discriminant function maximizes the amount of discrimination between groups while also remaining non-correlated with the other functions.
+### The analysis creates linear combinations of predictors, so called discriminant functions. The number of functions is equal to one less than the number of groups or equal to the number of predictors, whichever is smaller. Each discriminant function maximizes the amount of discrimination between groups while also remaining non-correlated with the other discriminant functions.
 
 # Linear discriminant analysis
 
 ```{r}
 library(MASS) # required for the lda() function
-library(caret) 
 library(tidyverse)
 
 # Load the data
 data("iris")
 
 # Split the data into training (80%) and test set (20%)
-set.seed(123)
+library(caret) 
+set.seed(123) # set random numbers to be the same for reproducable simulations
 training.samples <- iris$Species %>%
   createDataPartition(p = 0.8, list = FALSE)
 train.data <- iris[training.samples, ]
@@ -76,7 +76,7 @@ test.transformed <- preproc.param %>% predict(test.data)
 ```{r}
 LDA_object <- lda(Species~., data = train.transformed) # creates an object that is the results of the learning phase of the LDA - this is what you will use to predict what category each subsequent set of variables you feed it most likely belong to
 LDA_object
-plot(LDA_object)
+plot(LDA_object, col = as.integer(train.transformed$Species))
 ```
 
 ```{r}
@@ -88,7 +88,6 @@ lda.data <- cbind(train.transformed, predict(LDA_object)$x)
 ggplot(lda.data, aes(LD1, LD2)) +
   geom_point(aes(color = Species))
 ```
-
 
 ```{r}
 # Model accuracy
