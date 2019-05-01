@@ -107,27 +107,26 @@ mean(Predict_results$class==test.transformed$Species)
 > Quadratic discriminant analysis is an alternative to linear discriminant analysis. This type of discriminant analysis does not assume equal variance and co-variance matricies between groups. This makes this type of analysis better for very large datasets.  
 
 ```{r}
+
+# Produce model
 QDAmodel <- qda(Species~., data = train.transformed)
 QDAmodel
-# Make predictions
-predictions <- predict(QDAmodel, newdata = test.transformed)
-# Model accuracy
-mean(predictions$class == test.transformed$Species)
-```
 
-```{r}
 # How well does the model fit the training data?
 qda.train <- predict(QDAmodel)
 train.transformed$qda <- qda.train$class
 table(train.transformed$qda, train.transformed$Species)
+mean(qda.train$class == train.transformed$class)
+
+# Make predictions
+predictions <- predict(QDAmodel, newdata = test.transformed)
+test.transformed$qda <- predictions$class
+
+# Model accuracy
+table(test.transformed$qda, test.transformed$Species)
+mean(predictions$class == test.transformed$Species)
 ```
 
-```{r}
-# How well does the model predict group assignment?
-qda.test <- predict(QDAmodel,test.transformed)
-test.transformed$qda <- qda.test$class
-table(test.transformed$qda, test.transformed$Species)
-```
 
 ```{r}
 #  plot the quadratic discriminant functions for each variable combination
