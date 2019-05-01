@@ -13,6 +13,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 > A DFA can be used to predict group membership based on discriminating continous variable. It can also give a sense of how well those groups can be differentiated by those variables.
 
+<img src = "img/Screen Shot 2019-05-01 at 4.36.17 PM.png" />
+
 > In essence, a DFA is the reverse of a multivariate analysis of variance or MANOVA. In a MANOVA, the groups are the independent variables and the predictors are the dependent variables. For a DFA, the groups are the dependent variables while the predictors are the independent variables. 
 
 # Assumptions and limitations
@@ -37,10 +39,12 @@ knitr::opts_chunk$set(echo = TRUE)
 library(MASS) # required for the lda() function
 library(tidyverse)
 
+
 # Load the data
-data("iris")
+data("iris") # biult in R dataset
 
 # Split the data into training (80%) and test set (20%)
+# What is training vs. test data
 library(caret) 
 set.seed(123) # set random numbers to be the same for reproducable simulations
 training.samples <- iris$Species %>%
@@ -50,10 +54,16 @@ test.data <- iris[-training.samples, ]
 
 ```
 
+
+> One way to nomalize your data
 ```{r}
 # Estimate preprocessing parameters
+
 preproc.param <- train.data %>% 
   preProcess(method = c("center", "scale"))
+# scale divides each value by the SD of the attribute(variable)
+# center calculates mean for each attribute and subtracts from each value
+
 # Transform the data using the estimated parameters
 train.transformed <- preproc.param %>% predict(train.data)
 test.transformed <- preproc.param %>% predict(test.data)
@@ -66,14 +76,11 @@ test.transformed <- preproc.param %>% predict(test.data)
 # learning_dat <- read.csv("YourLearningData.csv") # read in the data you will use to teach the analysis what each category looks like - minimally, you need a column for category (in your case, individual) plus one column for each of your variables
 # 
 # experimental_dat <- read.csv("YourExperimentalData.csv") # read in the data for which you will be predicting categories - this should be formatted exactly like your learing data
-# 
-# 
-# 
-# Predict_results <- predict(LDA_object, newdata = experimental_dat) # use the LDA results object to predict the category for your experimental data - NOTE: if you have multiple rows in your experimental data, you'll need to use a for loop to compare each row to your LDA object
 ```
 
 
 ```{r}
+# Model creation
 LDA_object <- lda(Species~., data = train.transformed) # creates an object that is the results of the learning phase of the LDA - this is what you will use to predict what category each subsequent set of variables you feed it most likely belong to
 LDA_object
 # Prior probabilities of groups = probability of selecting one observation and it belonging to that respective group
@@ -87,10 +94,12 @@ plot(LDA_object, dimen = 1, type = "b") # visualize only separation by LD1
 ```
 
 ```{r}
-Predict_results <- predict(LDA_object, newdata = test.transformed) # use the LDA results object to predict the category for your experimental data - NOTE: if you have multiple rows in your experimental data, you'll need to use a for loop to compare each row to your LDA object 
+# Model predictions
+Predict_results <- predict(LDA_object, newdata = test.transformed) # use the LDA results object to predict the category for your experimental data 
 ```
 
 ```{r}
+# Plotting result in ggplot
 lda.data <- cbind(train.transformed, predict(LDA_object)$x)
 ggplot(lda.data, aes(LD1, LD2)) +
   geom_point(aes(color = Species))
@@ -117,7 +126,7 @@ mean(predictions$class == test.transformed$Species)
 
 ```{r}
 # How well does the model fit the training data?
-qda.train <- predict(QDAmodel)
+qda.train <- predict(QDAmodel) # generate 
 train.transformed$qda <- qda.train$class
 table(train.transformed$qda, train.transformed$Species)
 ```
