@@ -1,7 +1,7 @@
 ---
-title: "Discriminant_Function_Analysis"
+title: "Discriminant Function Analysis"
 author: "David Ledesma and Hans Bilger"
-date: "4/25/2019"
+date: "May 2, 2019"
 output: html_document
 ---
 
@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # What is a discriminant function anaysis (DFA) used for?
 
-> A DFA can be used to predict group membership based on discriminating continous variable. It can also give a sense of how well those groups can be differentiated by those variables.
+> A DFA can be used to predict group membership based on discriminating continous variables. It can also give a sense of how well those groups can be differentiated by those variables.
 
 <img src = "img/Screen Shot 2019-05-01 at 4.36.17 PM.png" />
 
@@ -21,17 +21,17 @@ knitr::opts_chunk$set(echo = TRUE)
 
 * 1) Unequal sample sizes are not a problem; however, the sample size within groups must be greater than the number of independent variable predictors (Rule of thumb: ~ 4 to 5 as many observations as predictor variables).
 
-* 2) Outliers can cause problems when assesing significance and should transformed or removed. Normally distributed variables are prefered, but variables not normally distributed will not influence the significance tests as long as the non-normality is not due to outliers.
+* 2) Outliers can cause problems when assessing significance and should transformed or removed. Normally distributed variables are preferred, but non-normally distributed variables will not influence model significance as long as the non-normality isn't driven by outliers.
 
-* 3) It is important that the independent variables must not be correlated with one another and have low multicollinearity. 
+* 3) Independent variables must uncorrelated and have low multicollinearity. 
 
-* 4) It is important to evaluate that there is not significant heterogeneity in the variance and co-variance matricies between groups. 
+* 4) There shouldn't be significant heterogeneity in the variance and co-variance matricies between groups. 
 
-> Discriminant function anaysis is similar to logistic regression and in fact both can be used to answer the same research questions. In many cases logistic regression may be preferable to a discriminant function anaysis because it has less assumptions and restrictions. However, a discriminant function anaysis may be prefered when looking at many different classifications. 
+> Discriminant function anaysis is similar to logistic regression. (In fact, both can be used to answer the same research questions.) In many cases, logistic regression may be preferable to a discriminant function anaysis because it has fewer assumptions and restrictions. However, a discriminant function anaysis may be prefered when the dependent variable contains more than two groups.
 
 # How does a discriminant function anaysis work?
 
-> The analysis creates linear combinations of predictors, so called discriminant functions. The number of functions is equal to one less than the number of groups or equal to the number of predictors, whichever is smaller. Each discriminant function maximizes the amount of discrimination between groups while also remaining non-correlated with the other discriminant functions.
+> The analysis creates "discriminant functions" using linear combinations of predictor variables. The number of functions is equal to either one less than the number of groups or the number of predictors—whichever is smaller. Each discriminant function maximizes the amount of discrimination between groups while also remaining non-correlated with the other discriminant functions. The model made from these discriminant functions can then be used to predict group membership on a new, uncharacterized sample.
 
 # Linear discriminant analysis
 
@@ -39,45 +39,55 @@ knitr::opts_chunk$set(echo = TRUE)
 library(MASS) # required for the lda() function
 library(tidyverse)
 
-
 # Load the data
-data("iris") # biult in R dataset
+data("iris") # built-in R dataset
+```
 
-# Split the data into training (80%) and test set (20%)
-# What is training vs. test data
+![Alt text](img/Fig1.jpg)
+![Alt text](img/Screen Shot 2019-05-02 at 10.50.11 AM.png)
+
+> Split the data into training (80%) and test (20%) sets
+
+```{r}
 library(caret) 
-set.seed(123) # set random numbers to be the same for reproducable simulations
+# set random numbers to be the same for reproducable simulations
+set.seed(123) 
+# conduct a stratified, random split of your sample
 training.samples <- iris$Species %>%
   createDataPartition(p = 0.8, list = FALSE)
 train.data <- iris[training.samples, ]
 test.data <- iris[-training.samples, ]
-
 ```
 
-
 > One way to nomalize your data
+
 ```{r}
 # Estimate preprocessing parameters
 
 preproc.param <- train.data %>% 
   preProcess(method = c("center", "scale"))
-# scale divides each value by the SD of the attribute(variable)
-# center calculates mean for each attribute and subtracts from each value
+  
+# "scale" divides each value by the SD of the attribute(variable)
+# "center" calculates mean for each attribute and subtracts from each value
 
 # Transform the data using the estimated parameters
 train.transformed <- preproc.param %>% predict(train.data)
 test.transformed <- preproc.param %>% predict(test.data)
 ```
 
+> In case you'd prefer to load in training and test data from separate files:
 
 ```{r}
 # Loading in data from separate files
-# 
-# learning_dat <- read.csv("YourLearningData.csv") # read in the data you will use to teach the analysis what each category looks like - minimally, you need a column for category (in your case, individual) plus one column for each of your variables
-# 
-# experimental_dat <- read.csv("YourExperimentalData.csv") # read in the data for which you will be predicting categories - this should be formatted exactly like your learing data
+
+# training_dat <- read.csv("YourLearningData.csv")
+
+# test_dat <- read.csv("YourExperimentalData.csv") 
+
+# Your training and test data must be formatted exactly the same.
 ```
 
+> Create your model:
 
 ```{r}
 # Model creation
@@ -93,21 +103,22 @@ plot(LDA_object, col = as.integer(train.transformed$Species)) # vizualize separa
 plot(LDA_object, dimen = 1, type = "b") # visualize only separation by LD1 
 ```
 
+> Now, use your model to predict group membership of your training dataset.
+
 ```{r}
-# Model predictions
 Predict_results <- predict(LDA_object, newdata = test.transformed) # use the LDA results object to predict the category for your experimental data 
 ```
 
 ```{r}
-# Plotting result in ggplot
+# Plotting the result in ggplot
 lda.data <- cbind(train.transformed, predict(LDA_object)$x)
 ggplot(lda.data, aes(LD1, LD2)) +
   geom_point(aes(color = Species))
 ```
 
-```{r}
-# Model accuracy
+> Now, test the accuracy of your model by calculating the fraction of correct classifications.
 
+```{r}
 mean(Predict_results$class==test.transformed$Species)
 ```
 
