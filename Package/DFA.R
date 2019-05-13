@@ -13,6 +13,7 @@
 #   Check Package:             'Cmd + Shift + E'
 #   Test Package:              'Cmd + Shift + T'
 
+#### Split the data into training (80%) and test (20%) sets
 
 Partition <- function(x, p=.8) {
   sample <- sample.int(n = nrow(x), size = floor(p*nrow(x)), replace = F)
