@@ -22,7 +22,7 @@ Partition <- function(x, p=.8) {
 }
 x <- Partition(iris)
 
-####
+#### Create your model and use your model to predict group membership
 
 DFA_pred <- function(model, data) {
   LDA_object <- MASS::lda(model, data)
@@ -33,17 +33,17 @@ DFA_pred <- function(model, data) {
 y <- DFA_pred(Species~., x$train)
 p <- DFA_pred(Species~., x$test)
 
-####
+#### Plotting the result in ggplot
 
-library(ggplot2)
 DFA_plot <- function(data) {
   v <- as.data.frame(data)
   g<- ggplot2::ggplot(v, aes(v$x.LD1, v$x.LD2)) +
     geom_point(aes(color = v$class))
-  g <- g + ggtitle("LDA Predictions")
-  g <- g + xlab("LD1")
-  g <- g + ylab("LD2")
+  g <- g + ggplot2::ggtitle("LDA Predictions")
+  g <- g + ggplot2::xlab("LD1")
+  g <- g + ggplot2::ylab("LD2")
 }
+
 h <- DFA_plot(y)
 h
 t <-DFA_plot(p)
