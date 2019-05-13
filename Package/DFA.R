@@ -24,14 +24,14 @@ x <- Partition(iris)
 
 ####
 
-DFA <- function(model, data, groups) {
+DFA_pred <- function(model, data) {
   LDA_object <- MASS::lda(model, data)
   Predict.lda.values <- predict(LDA_object, data)
   return(Predict.lda.values)
 }
 
-y <- DFA(Species~., x$train, iris$Species)
-p <- DFA(Species~., x$test, iris$Species)
+y <- DFA_pred(Species~., x$train)
+p <- DFA_pred(Species~., x$test)
 
 ####
 
@@ -47,4 +47,16 @@ DFA_plot <- function(data) {
 h <- DFA_plot(y)
 h
 t <-DFA_plot(p)
+t
+
+#### Tests for Accuracy
+
+Accuracy <- function(train_pred, test_pred, partitioned_list) {
+  test <- mean(test_pred$class==x$test$Species)
+  train <- mean(train_pred$class==x$train$Species)
+  return(list(train=train,test=test))
+}
+Accuracy(y, p, x)
+
+
 
